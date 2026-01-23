@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fixtures | Champions League</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="container">
+      <h1>⚽ Fixtures App</h1>
+      <nav>
+        <a href="index.html" class="active">Fixtures</a>
+        <a href="standings.html">Standings</a>
+        <a href="schedule.html">Schedule</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+    <!-- Date Selector -->
+    <div class="date-selector">
+      <button id="prev-date">←</button>
+      <div class="date-display">
+        <span id="current-date">Wednesday, January 22, 2026</span>
+        <input type="date" id="date-picker" value="2026-01-22">
+      </div>
+      <button id="next-date">→</button>
+    </div>
+
+    <!-- Fixtures Widget -->
+    <div class="widget-container">
+      <div id="loading-indicator" class="loading">
+        <p>Loading fixtures...</p>
+      </div>
+      <api-sports-widget
+        id="fixtures-widget"
+        data-type="games"
+        data-league="2"
+        data-season="2024"
+        data-date="2026-01-22"
+        data-target="match-detail"
+      ></api-sports-widget>
+    </div>
+
+    <!-- Match Detail Modal (shown when fixture clicked) -->
+    <div id="match-detail" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <api-sports-widget
+          data-type="game"
+        ></api-sports-widget>
+      </div>
+    </div>
+  </main>
+
+  <!-- Widget Configuration -->
+  <api-sports-widget
+    data-type="config"
+    data-key="23d8de870ce857b71cca01de36de26aa"
+    data-sport="football"
+    data-refresh="15"
+    data-show-logos="true"
+    data-favorite="true"
+    data-theme="dark"
+    data-lang="en"
+  ></api-sports-widget>
+
+  <!-- Widget Script -->
+  <script type="module" src="https://widgets.api-sports.io/3.1.0/widgets.js"></script>
+
+  <!-- Custom Scripts -->
+  <script src="js/date-selector.js"></script>
+</body>
+</html>
