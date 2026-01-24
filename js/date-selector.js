@@ -1,5 +1,5 @@
 // Date navigation functionality
-let currentDate = new Date('2024-11-26'); // Champions League Matchday 5
+let currentDate = new Date('2026-01-22');
 const fixturesWidget = document.getElementById('fixtures-widget');
 const currentDateSpan = document.getElementById('current-date');
 const datePicker = document.getElementById('date-picker');
