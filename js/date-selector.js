@@ -1,5 +1,5 @@
 // Date navigation functionality
-let currentDate = new Date('2026-01-22');
+let currentDate = new Date('2024-11-26'); // Champions League Matchday 5
 const fixturesWidget = document.getElementById('fixtures-widget');
 const currentDateSpan = document.getElementById('current-date');
 const datePicker = document.getElementById('date-picker');
@@ -72,6 +72,9 @@ window.addEventListener('load', () => {
       widgetContainer.classList.add('widget-loaded');
     }
   }, 2000);
+
+  // Force date synchronization on page load - ensures all 3 displays match
+  updateDate(currentDate);
 });
 
 // Initialize with current date on page load
