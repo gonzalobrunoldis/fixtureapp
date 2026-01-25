@@ -45,24 +45,106 @@ datePicker?.addEventListener('change', (e) => {
 
 // Modal functionality
 const modal = document.getElementById('match-detail');
+const modalWidget = document.getElementById('match-detail-widget');
+const modalLoading = document.getElementById('modal-loading');
 const closeBtn = document.querySelector('.close');
 
-closeBtn?.addEventListener('click', () => {
-  modal.classList.remove('active');
-});
+// Function to open modal
+function openModal() {
+  if (modal) {
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
 
+    // Show loading indicator
+    if (modalLoading) {
+      modalLoading.style.display = 'flex';
+    }
+
+    // Hide loading after widget has time to load
+    setTimeout(() => {
+      if (modalLoading) {
+        modalLoading.style.display = 'none';
+      }
+    }, 2000);
+  }
+}
+
+// Function to close modal
+function closeModal() {
+  if (modal) {
+    modal.classList.remove('active');
+    document.body.style.overflow = ''; // Restore scrolling
+  }
+}
+
+// Close button click
+closeBtn?.addEventListener('click', closeModal);
+
+// Click outside modal to close
 window.addEventListener('click', (e) => {
   if (e.target === modal) {
-    modal.classList.remove('active');
+    closeModal();
   }
 });
 
-// Listen for widget interactions
-document.addEventListener('widget-click', (e) => {
-  if (e.detail.type === 'fixture') {
-    modal.classList.add('active');
+// ESC key to close modal
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && modal?.classList.contains('active')) {
+    closeModal();
   }
 });
+
+// Method 1: Listen for widget-click event (if widget library supports it)
+document.addEventListener('widget-click', (e) => {
+  if (e.detail?.type === 'fixture' || e.detail?.type === 'game') {
+    openModal();
+  }
+});
+
+// Method 2: Observe changes to modal widget (fallback if widget-click doesn't work)
+if (modalWidget && modal) {
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      // If widget content changes (fixture data loaded), open modal
+      if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+        openModal();
+      }
+      // Check for attribute changes that indicate widget data loaded
+      if (mutation.type === 'attributes' &&
+          (mutation.attributeName === 'data-fixture' ||
+           mutation.attributeName === 'data-id')) {
+        openModal();
+      }
+    });
+  });
+
+  // Start observing the modal widget for changes
+  observer.observe(modalWidget, {
+    childList: true,
+    attributes: true,
+    attributeFilter: ['data-fixture', 'data-id', 'data-game']
+  });
+}
+
+// Method 3: Click event on fixtures widget (additional fallback)
+if (fixturesWidget) {
+  fixturesWidget.addEventListener('click', (e) => {
+    // If click is on a fixture element, prepare to show modal
+    // The widget library will handle populating the modal widget
+    const fixtureElement = e.target.closest('[data-fixture-id]') ||
+                          e.target.closest('.fixture') ||
+                          e.target.closest('[class*="match"]');
+
+    if (fixtureElement) {
+      // Give widget time to populate before showing modal
+      setTimeout(() => {
+        if (modalWidget && modalWidget.innerHTML.trim()) {
+          openModal();
+        }
+      }, 100);
+    }
+  });
+}
 
 // Hide loading indicator when widget loads
 window.addEventListener('load', () => {

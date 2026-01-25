@@ -50,7 +50,11 @@
     <div id="match-detail" class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
+        <div id="modal-loading" class="loading">
+          <p>Loading match details...</p>
+        </div>
         <api-sports-widget
+          id="match-detail-widget"
           data-type="game"
         ></api-sports-widget>
       </div>

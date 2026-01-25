@@ -173,10 +173,13 @@ main h2 {
   height: 100%;
   background: rgba(0, 0, 0, 0.9);
   overflow: auto;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .modal.active {
   display: block;
+  opacity: 1;
 }
 
 .modal-content {
@@ -186,6 +189,21 @@ main h2 {
   border-radius: 8px;
   max-width: 900px;
   position: relative;
+  min-height: 400px;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.modal.active .modal-content {
+  transform: scale(1);
+}
+
+.modal-content .loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
 }
 
 .close {
@@ -197,6 +215,7 @@ main h2 {
   font-weight: bold;
   cursor: pointer;
   transition: color 0.3s;
+  z-index: 10;
 }
 
 .close:hover {
