@@ -108,6 +108,145 @@ Use date picker to navigate to these dates (season 2024 = 2024/25 Champions Leag
 
 ---
 
+## FIX-20: Additional Pages Polish Testing (10 min)
+
+**Purpose**: Verify polish improvements to standings and schedule pages
+
+### Standings Page Polish Tests
+
+**URL**: http://localhost:8000/standings.html
+
+**Visual Elements:**
+- [ ] Page description appears below header ("View the current Champions League table...")
+- [ ] Page description uses secondary text color (gray)
+- [ ] Loading indicator shows "Loading standings..." while widget loads
+- [ ] Loading indicator has spinning animation
+- [ ] Loading indicator disappears when widget loads
+
+**Widget Functionality:**
+- [ ] Standings widget displays league table
+- [ ] Team logos are visible
+- [ ] Points, wins, draws, losses display correctly
+- [ ] Dark theme is applied
+- [ ] No console errors
+
+**Navigation:**
+- [ ] "Standings" nav item is highlighted with green accent
+- [ ] Header structure matches index.html
+- [ ] Navigation links work (Fixtures, Schedule)
+
+**Responsive Design:**
+- [ ] Desktop (1200px+): Full width layout
+- [ ] Tablet (768px-1199px): Adjusted layout
+- [ ] Mobile (<768px): Stacked layout, readable
+- [ ] No horizontal scrolling on any size
+
+### Schedule Page Polish Tests
+
+**URL**: http://localhost:8000/schedule.html
+
+**Visual Elements:**
+- [ ] Page description appears below header ("Browse all Champions League matches...")
+- [ ] Page description uses secondary text color (gray)
+- [ ] Loading indicator shows "Loading schedule..." while widget loads
+- [ ] Loading indicator has spinning animation
+- [ ] Loading indicator disappears when widget loads
+
+**Widget Functionality:**
+- [ ] League widget displays full schedule
+- [ ] All matchdays are visible
+- [ ] Match dates and teams shown
+- [ ] Dark theme is applied
+- [ ] No console errors
+
+**Navigation:**
+- [ ] "Schedule" nav item is highlighted with green accent
+- [ ] Header structure matches index.html
+- [ ] Navigation links work (Fixtures, Standings)
+
+**Responsive Design:**
+- [ ] Desktop (1200px+): Full width layout
+- [ ] Tablet (768px-1199px): Adjusted layout
+- [ ] Mobile (<768px): Stacked layout, readable
+- [ ] No horizontal scrolling on any size
+
+### Cross-Page Consistency Tests
+
+**Action**: Navigate through all 3 pages and compare
+
+**Consistent Elements:**
+- [ ] Header structure identical across all pages
+- [ ] Navigation styling matches (same colors, spacing, active state)
+- [ ] Page description styling consistent (color, font size, margin)
+- [ ] Loading indicator styling consistent
+- [ ] Widget container styling matches
+- [ ] Dark theme applied consistently
+
+**CSS Variables Check** (Open DevTools → Elements → :root):
+- [ ] `--bg-primary: #0a0a0a`
+- [ ] `--bg-secondary: #1a1a1a`
+- [ ] `--text-primary: #ffffff`
+- [ ] `--text-secondary: #a0a0a0`
+- [ ] `--accent-color: #00ff88`
+
+### Browser Compatibility Tests
+
+**Test on multiple browsers:**
+
+**Chrome:**
+- [ ] All pages load correctly
+- [ ] Loading indicators work
+- [ ] Widgets display
+- [ ] Navigation works
+- [ ] Responsive design works
+
+**Firefox:**
+- [ ] All pages load correctly
+- [ ] Loading indicators work
+- [ ] Widgets display
+- [ ] Navigation works
+- [ ] Responsive design works
+
+**Edge:**
+- [ ] All pages load correctly
+- [ ] Loading indicators work
+- [ ] Widgets display
+- [ ] Navigation works
+- [ ] Responsive design works
+
+**Safari** (if available):
+- [ ] All pages load correctly
+- [ ] Loading indicators work
+- [ ] Widgets display
+- [ ] Navigation works
+- [ ] Responsive design works
+
+### Performance Tests
+
+**Page Load Speed:**
+- [ ] standings.html loads in < 3 seconds
+- [ ] schedule.html loads in < 3 seconds
+- [ ] Widget data appears in < 5 seconds
+
+**Console Check:**
+- [ ] No errors on standings.html
+- [ ] No errors on schedule.html
+- [ ] No warnings related to CSS or HTML
+
+### Acceptance Criteria
+
+✅ **FIX-20 is complete if:**
+- All visual polish elements visible and styled correctly
+- Loading indicators work on both pages
+- Page descriptions display correctly
+- Cross-page consistency maintained
+- All navigation works correctly
+- Responsive design works on all screen sizes
+- No console errors
+- Cross-browser compatibility verified (at least Chrome + 1 other browser)
+
+---
+
 ## Test 1: Widget Integration Test (2 min)
 
 **URL**: http://localhost:8000/test-widget.html

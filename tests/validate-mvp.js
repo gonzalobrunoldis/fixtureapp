@@ -132,6 +132,14 @@ if (fs.existsSync('standings.html')) {
     'data-league="2"',
     'data-season="2024"'
   ], 'Standings page has required elements');
+
+  // Check polish features (FIX-20)
+  checkFileContent('standings.html', [
+    'class="page-description"',
+    'id="loading-indicator"',
+    'class="loading"',
+    'Loading standings...'
+  ], 'Standings page polish features present (FIX-20)');
 }
 
 console.log('\n📄 Validating schedule.html...\n');
@@ -143,6 +151,14 @@ if (fs.existsSync('schedule.html')) {
     'data-league="2"',
     'data-season="2024"'
   ], 'Schedule page has required elements');
+
+  // Check polish features (FIX-20)
+  checkFileContent('schedule.html', [
+    'class="page-description"',
+    'id="loading-indicator"',
+    'class="loading"',
+    'Loading schedule...'
+  ], 'Schedule page polish features present (FIX-20)');
 }
 
 console.log('\n🎨 Validating CSS (styles.css)...\n');
@@ -163,7 +179,9 @@ if (fs.existsSync('css/styles.css')) {
     '.app-header',
     '.date-selector',
     '.modal',
-    '.widget-container'
+    '.widget-container',
+    '.page-description',
+    '.loading'
   ], 'Essential component styles present');
 
   // Check responsive design
