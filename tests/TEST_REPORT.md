@@ -1,14 +1,15 @@
 # 🧪 MVP Test Report
-**Date**: January 23, 2026
+**Date**: January 24, 2026
 **Tester**: Claude (Automated Validation)
-**Version**: MVP - Days 1-2 Complete
+**Version**: MVP - Days 1-3 Complete (FIX-13 Including FIX-20 Polish)
 
 ---
 
 ## Executive Summary
 
-✅ **All automated validation tests passed (21/21 - 100%)**
+✅ **All automated validation tests passed (23/23 - 100%)**
 ✅ **Core functionality implemented and verified**
+✅ **Additional pages polished and tested (FIX-20)**
 ✅ **Ready for manual browser testing**
 
 ---
@@ -46,15 +47,21 @@
 - ✅ Navigation links to all pages
 - ✅ Widget script and custom JS properly linked
 
-**standings.html**
+**standings.html** (Updated FIX-20)
 - ✅ Consistent header/navigation structure
 - ✅ Standings widget properly configured
 - ✅ Active navigation indicator on correct page
+- ✅ **NEW**: Page description under header
+- ✅ **NEW**: Loading indicator with spinner animation
+- ✅ **NEW**: "Loading standings..." text
 
-**schedule.html**
+**schedule.html** (Updated FIX-20)
 - ✅ Consistent header/navigation structure
 - ✅ League widget properly configured (full schedule)
 - ✅ Active navigation indicator on correct page
+- ✅ **NEW**: Page description under header
+- ✅ **NEW**: Loading indicator with spinner animation
+- ✅ **NEW**: "Loading schedule..." text
 
 ### CSS Quality ✅
 **styles.css**
@@ -70,8 +77,10 @@
   - Date selector with buttons and picker
   - Widget container with loading indicator
   - Modal overlay for match details
+  - **NEW (FIX-20)**: Page description styling
 - ✅ Smooth transitions and animations
 - ✅ Loading spinner animation
+- ✅ **NEW (FIX-20)**: Page description class (.page-description)
 
 ### JavaScript Quality ✅
 **date-selector.js**
@@ -157,16 +166,17 @@
 
 ## 4. Functional Testing Results
 
-### Automated Code Validation: 21/21 PASSED ✅
+### Automated Code Validation: 23/23 PASSED ✅
 
 | Test Category | Tests | Passed | Failed |
 |--------------|-------|--------|--------|
 | File Structure | 7 | 7 | 0 |
-| HTML Validation | 4 | 4 | 0 |
+| HTML Validation | 6 | 6 | 0 |
 | CSS Validation | 3 | 3 | 0 |
 | JavaScript Validation | 3 | 3 | 0 |
 | Configuration | 2 | 2 | 0 |
-| **TOTAL** | **21** | **21** | **0** |
+| FIX-20 Polish Features | 2 | 2 | 0 |
+| **TOTAL** | **23** | **23** | **0** |
 
 ### Key Validations Performed:
 
@@ -183,7 +193,116 @@
 
 ---
 
-## 5. Browser Testing Recommendations
+## 5. FIX-20: Additional Pages Polish Testing Results
+
+**Status**: ✅ COMPLETED
+**Date**: January 24, 2026
+**Related Issues**: FIX-13 (Parent), FIX-19 (Implementation), FIX-20 (Testing)
+
+### Implementation Summary (FIX-19)
+
+**Files Modified:**
+1. `standings.html`
+   - Added loading indicator with "Loading standings..." text
+   - Added page description: "View the current Champions League table..."
+
+2. `schedule.html`
+   - Added loading indicator with "Loading schedule..." text
+   - Added page description: "Browse all Champions League matches..."
+
+3. `css/styles.css`
+   - Added `.page-description` class
+   - Color: `var(--text-secondary)` (#a0a0a0)
+   - Margin: 1.5rem bottom
+   - Font size: 1rem
+
+**Commit Hash**: 6a70d80 (Implementation), 9b0290d (Tests)
+
+### Automated Test Results
+
+#### FIX-20 Specific Tests: 2/2 PASSED ✅
+
+1. ✅ **Standings Polish Features**
+   - Page description class present
+   - Loading indicator HTML structure correct
+   - Loading indicator animation class present
+   - Loading text matches specification
+
+2. ✅ **Schedule Polish Features**
+   - Page description class present
+   - Loading indicator HTML structure correct
+   - Loading indicator animation class present
+   - Loading text matches specification
+
+#### CSS Validation: PASSED ✅
+
+- ✅ `.page-description` class defined in styles.css
+- ✅ `.loading` class defined in styles.css
+- ✅ Loading animation keyframes present
+- ✅ Color variables correctly referenced
+
+### Manual Testing Checklist
+
+#### Visual Elements
+- [ ] Page descriptions visible on both pages
+- [ ] Page descriptions use secondary text color (gray #a0a0a0)
+- [ ] Loading indicators appear on page load
+- [ ] Loading indicators have spinning animation
+- [ ] Loading indicators disappear after widgets load
+
+#### Cross-Page Consistency
+- [ ] Header structure identical across all pages
+- [ ] Navigation styling consistent
+- [ ] Page description styling matches
+- [ ] Loading indicator styling matches
+
+#### Responsive Design
+- [ ] Desktop layout works (1200px+)
+- [ ] Tablet layout works (768px-1199px)
+- [ ] Mobile layout works (<768px)
+- [ ] No horizontal scrolling on any size
+
+#### Browser Compatibility
+- [ ] Chrome - All polish features work
+- [ ] Firefox - All polish features work
+- [ ] Edge - All polish features work
+- [ ] Safari - All polish features work
+
+### Test Coverage
+
+| Feature | Automated | Manual | Status |
+|---------|-----------|--------|--------|
+| Page descriptions HTML | ✅ | ⏳ | Automated PASSED |
+| Loading indicators HTML | ✅ | ⏳ | Automated PASSED |
+| CSS .page-description | ✅ | ⏳ | Automated PASSED |
+| CSS .loading | ✅ | ⏳ | Automated PASSED |
+| Visual appearance | ❌ | ⏳ | Requires manual test |
+| Animation timing | ❌ | ⏳ | Requires manual test |
+| Cross-browser | ❌ | ⏳ | Requires manual test |
+
+### Acceptance Criteria
+
+FIX-20 acceptance criteria from Linear ticket:
+
+- ✅ **Automated Tests**: All test cases pass (23/23)
+- ⏳ **Test Documentation**: Updated in `/tests` (TEST_CHECKLIST.md, validate-mvp.js, TEST_REPORT.md)
+- ⏳ **No Critical Bugs**: To be verified in manual testing
+- ⏳ **Cross-Browser**: To be verified in manual testing
+
+### Known Issues
+
+None found in automated testing.
+
+### Recommendations
+
+1. **Immediate**: Run manual browser tests using updated TEST_CHECKLIST.md
+2. **Priority**: Test loading indicator timing (ensure it shows long enough to be visible)
+3. **Nice-to-have**: Test on slow connection to verify loading states
+4. **Future**: Add automated visual regression testing
+
+---
+
+## 6. Browser Testing Recommendations
 
 ### Manual Tests Required (Next Step)
 
