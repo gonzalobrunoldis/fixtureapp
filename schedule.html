@@ -22,9 +22,13 @@
   <!-- Main Content -->
   <main class="container">
     <h2>Full Champions League Schedule</h2>
+    <p class="page-description">Browse all Champions League matches organized by matchday.</p>
 
     <!-- League Widget -->
     <div class="widget-container">
+      <div id="loading-indicator" class="loading">
+        <p>Loading schedule...</p>
+      </div>
       <api-sports-widget
         data-type="league"
         data-league="2"

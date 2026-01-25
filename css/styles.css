@@ -66,6 +66,12 @@ main h2 {
   font-size: 1.8rem;
 }
 
+.page-description {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
 /* Date Selector */
 .date-selector {
   display: flex;

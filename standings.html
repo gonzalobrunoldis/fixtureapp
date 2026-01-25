@@ -22,9 +22,13 @@
   <!-- Main Content -->
   <main class="container">
     <h2>Champions League Standings</h2>
+    <p class="page-description">View the current Champions League table with team rankings, points, and statistics.</p>
 
     <!-- Standings Widget -->
     <div class="widget-container">
+      <div id="loading-indicator" class="loading">
+        <p>Loading standings...</p>
+      </div>
       <api-sports-widget
         data-type="standings"
         data-league="2"
