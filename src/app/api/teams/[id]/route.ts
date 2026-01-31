@@ -3,88 +3,83 @@ import { getTeams, getTeamStatistics } from '@/lib/api-football/endpoints';
 import { ApiFootballError } from '@/lib/api-football/client';
 
 /**
- * GET /api/teams
+ * GET /api/teams/[id]
  *
- * Retrieves team information with optional statistics.
+ * Retrieves detailed information for a single team.
+ *
+ * Path Parameters:
+ * - id: Team ID
  *
  * Query Parameters:
- * - id: Team ID (for single team lookup)
- * - name: Team name (for search)
- * - league: League ID (filter teams by league)
- * - season: Season year (required when using league filter)
+ * - league: League ID (required for statistics)
+ * - season: Season year (required for statistics)
  * - stats: Include statistics (true/false, requires league and season)
  *
  * Examples:
- * - GET /api/teams?id=123 (single team)
- * - GET /api/teams?name=Manchester (search)
- * - GET /api/teams?league=2&season=2024 (teams in league)
- * - GET /api/teams?id=123&league=2&season=2024&stats=true (team with stats)
+ * - GET /api/teams/123
+ * - GET /api/teams/123?league=2&season=2024&stats=true
  */
-export async function GET(request: Request) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    // Parse query parameters
-    const { searchParams } = new URL(request.url);
+    // Get the team ID from params
+    const { id } = await params;
+    const teamId = parseInt(id, 10);
 
-    const params = {
-      id: searchParams.get('id')
-        ? parseInt(searchParams.get('id')!, 10)
-        : undefined,
-      name: searchParams.get('name') || undefined,
-      league: searchParams.get('league')
-        ? parseInt(searchParams.get('league')!, 10)
-        : undefined,
-      season: searchParams.get('season')
-        ? parseInt(searchParams.get('season')!, 10)
-        : undefined,
-    };
-
-    const includeStats = searchParams.get('stats') === 'true';
-
-    // Validate parameters
-    if (params.league && !params.season) {
+    if (isNaN(teamId)) {
       return NextResponse.json(
         {
-          error: 'Invalid parameters',
-          message: 'Season is required when filtering by league',
+          error: 'Invalid team ID',
+          message: 'Team ID must be a valid number',
         },
         { status: 400 }
       );
     }
 
-    if (includeStats && (!params.id || !params.league || !params.season)) {
+    // Parse query parameters
+    const { searchParams } = new URL(request.url);
+    const league = searchParams.get('league')
+      ? parseInt(searchParams.get('league')!, 10)
+      : undefined;
+    const season = searchParams.get('season')
+      ? parseInt(searchParams.get('season')!, 10)
+      : undefined;
+    const includeStats = searchParams.get('stats') === 'true';
+
+    // Validate stats parameters
+    if (includeStats && (!league || !season)) {
       return NextResponse.json(
         {
           error: 'Invalid parameters',
-          message:
-            'Team ID, league, and season are required to fetch statistics',
+          message: 'League and season are required to fetch statistics',
         },
         { status: 400 }
       );
     }
 
     // Fetch team data
-    const apiResponse = await getTeams(params);
+    const apiResponse = await getTeams({ id: teamId });
     const teams = apiResponse.response;
 
     if (!teams || teams.length === 0) {
       return NextResponse.json(
         {
-          error: 'No teams found',
-          message: 'No teams match the provided criteria',
+          error: 'Team not found',
+          message: `No team found with ID ${teamId}`,
         },
         { status: 404 }
       );
     }
 
+    const team = teams[0];
+
     // If statistics requested, fetch them
     let statistics = null;
-    if (includeStats && params.id && params.league && params.season) {
+    if (includeStats && league && season) {
       try {
-        const statsResponse = await getTeamStatistics(
-          params.league,
-          params.season,
-          params.id
-        );
+        const statsResponse = await getTeamStatistics(league, season, teamId);
         statistics = statsResponse.response;
       } catch (error) {
         console.warn('Failed to fetch team statistics:', error);
@@ -95,10 +90,9 @@ export async function GET(request: Request) {
     // Return with cache headers (24 hours for team data)
     const response = NextResponse.json(
       {
-        data: teams,
+        data: team,
         statistics,
         source: 'api',
-        count: teams.length,
       },
       { status: 200 }
     );
@@ -111,7 +105,7 @@ export async function GET(request: Request) {
 
     return response;
   } catch (error) {
-    console.error('Teams API error:', error);
+    console.error('Team detail API error:', error);
 
     // Handle API-Football specific errors
     if (error instanceof ApiFootballError) {
@@ -128,7 +122,7 @@ export async function GET(request: Request) {
     // Handle generic errors
     return NextResponse.json(
       {
-        error: 'Failed to fetch teams',
+        error: 'Failed to fetch team',
         message:
           error instanceof Error ? error.message : 'An unknown error occurred',
       },
