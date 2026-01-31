@@ -1,10 +1,35 @@
+'use client';
+
+import { useState } from 'react';
+import { DatePicker } from '@/components/fixtures';
+import { Header, PageContainer } from '@/components/layout';
+import { getTodayAtStartOfDay } from '@/lib/utils/date';
+
 export default function HomePage() {
+  const [selectedDate, setSelectedDate] = useState<Date>(
+    getTodayAtStartOfDay()
+  );
+
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold mb-2">Home/Today</h1>
-        <p className="text-muted-foreground">Coming soon...</p>
+    <PageContainer>
+      <Header title="Home" subtitle="Today's matches and fixtures" />
+
+      <div className="space-y-6">
+        {/* Date Picker */}
+        <DatePicker
+          selectedDate={selectedDate}
+          onDateChange={setSelectedDate}
+        />
+
+        {/* Fixtures will go here */}
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <p className="text-muted-foreground">
+              Fixtures for {selectedDate.toLocaleDateString()} coming soon...
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }
