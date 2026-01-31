@@ -320,21 +320,62 @@ export async function getStandings(
 }
 
 /**
+ * Team Information with Venue
+ */
+export interface TeamInfo {
+  team: Team & {
+    code: string | null;
+    country: string;
+    founded: number | null;
+    national: boolean;
+  };
+  venue: Venue & {
+    capacity: number | null;
+  };
+}
+
+/**
  * Get team information
  *
  * @param params - Filter parameters
  * @param params.id - Team ID
  * @param params.name - Team name
+ * @param params.search - Search query
  * @param params.league - League ID
  * @param params.season - Season year
  */
 export async function getTeams(params: {
   id?: number;
   name?: string;
+  search?: string;
   league?: number;
   season?: number;
-}): Promise<ApiFootballResponse<{ team: Team; venue: Venue }[]>> {
-  return apiFootballGet<{ team: Team; venue: Venue }[]>('/teams', params);
+}): Promise<ApiFootballResponse<TeamInfo[]>> {
+  return apiFootballGet<TeamInfo[]>('/teams', params);
+}
+
+/**
+ * Search teams by name (minimum 3 characters)
+ *
+ * @param search - Search query (minimum 3 characters)
+ */
+export async function searchTeams(
+  search: string
+): Promise<ApiFootballResponse<TeamInfo[]>> {
+  if (search.length < 3) {
+    return {
+      get: '',
+      parameters: { search },
+      errors: [{ search: 'Search query must be at least 3 characters' }],
+      results: 0,
+      paging: {
+        current: 1,
+        total: 1,
+      },
+      response: [],
+    };
+  }
+  return apiFootballGet<TeamInfo[]>('/teams', { search });
 }
 
 /**
