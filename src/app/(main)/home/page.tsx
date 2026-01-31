@@ -9,6 +9,7 @@ import {
 } from '@/components/fixtures';
 import { Header, PageContainer } from '@/components/layout';
 import { useFixtures } from '@/hooks/use-fixtures';
+import { useUserFilters } from '@/hooks/use-user-filters';
 import { getTodayAtStartOfDay } from '@/lib/utils/date';
 import { useFiltersStore } from '@/stores/filters.store';
 import { type FixtureDisplay } from '@/types/fixtures.types';
@@ -23,6 +24,9 @@ export default function HomePage() {
 
   // Fetch fixtures for selected date
   const { data: fixtures, isLoading, error } = useFixtures(selectedDate);
+
+  // Initialize and persist user filters (for authenticated users)
+  useUserFilters();
 
   // Get filter state
   const { hiddenLeagues, hiddenCountries } = useFiltersStore();
