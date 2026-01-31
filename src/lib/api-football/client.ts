@@ -2,10 +2,12 @@
  * API-Football HTTP Client
  *
  * Provides a configured HTTP client for making requests to the API-Football API.
- * Handles authentication, error handling, and request/response logging in development.
+ * Handles authentication, error handling, request/response logging, and rate limiting.
  *
  * @see https://www.api-football.com/documentation-v3
  */
+
+import { apiFootballRateLimiter } from './rate-limiter';
 
 const API_BASE_URL = 'https://v3.football.api-sports.io';
 
@@ -150,113 +152,116 @@ export async function apiFootballGet<T>(
   endpoint: string,
   params: Record<string, string | number> = {}
 ): Promise<ApiFootballResponse<T>> {
-  const startTime = Date.now();
-  const apiKey = getApiKey();
+  // Wrap the request in rate limiter
+  return apiFootballRateLimiter.execute(async () => {
+    const startTime = Date.now();
+    const apiKey = getApiKey();
 
-  // Build query string
-  const queryParams = new URLSearchParams();
-  Object.entries(params).forEach(([key, value]) => {
-    queryParams.append(key, String(value));
-  });
-
-  const url = `${API_BASE_URL}${endpoint}${
-    queryParams.toString() ? `?${queryParams.toString()}` : ''
-  }`;
-
-  // Configure headers
-  const headers = new Headers();
-  headers.append('x-rapidapi-key', apiKey);
-  headers.append('x-rapidapi-host', 'v3.football.api-sports.io');
-
-  try {
-    // Log request in development
-    logRequest(endpoint, params);
-
-    // Make the request
-    const response = await fetch(url, {
-      method: 'GET',
-      headers,
-      redirect: 'follow',
+    // Build query string
+    const queryParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      queryParams.append(key, String(value));
     });
 
-    // Extract rate limit info
-    const rateLimit = extractRateLimitInfo(response.headers);
+    const url = `${API_BASE_URL}${endpoint}${
+      queryParams.toString() ? `?${queryParams.toString()}` : ''
+    }`;
 
-    // Log rate limit in development
-    if (process.env.NODE_ENV === 'development') {
-      logRequest(endpoint, params, rateLimit);
-    }
+    // Configure headers
+    const headers = new Headers();
+    headers.append('x-rapidapi-key', apiKey);
+    headers.append('x-rapidapi-host', 'v3.football.api-sports.io');
 
-    // Check for rate limit error (429)
-    if (response.status === 429) {
+    try {
+      // Log request in development
+      logRequest(endpoint, params);
+
+      // Make the request
+      const response = await fetch(url, {
+        method: 'GET',
+        headers,
+        redirect: 'follow',
+      });
+
+      // Extract rate limit info
+      const rateLimit = extractRateLimitInfo(response.headers);
+
+      // Log rate limit in development
+      if (process.env.NODE_ENV === 'development') {
+        logRequest(endpoint, params, rateLimit);
+      }
+
+      // Check for rate limit error (429)
+      if (response.status === 429) {
+        const duration = Date.now() - startTime;
+        logError(new Error('Rate limit exceeded'), duration);
+
+        throw new ApiFootballError(
+          'Rate limit exceeded. Please try again later.',
+          429,
+          ['Too many requests'],
+          rateLimit
+        );
+      }
+
+      // Check for other HTTP errors
+      if (!response.ok) {
+        const duration = Date.now() - startTime;
+        const errorText = await response.text();
+
+        logError(new Error(`HTTP ${response.status}: ${errorText}`), duration);
+
+        throw new ApiFootballError(
+          `API request failed with status ${response.status}`,
+          response.status,
+          [errorText],
+          rateLimit
+        );
+      }
+
+      // Parse JSON response
+      const data: ApiFootballResponse<T> = await response.json();
+
+      // Check for API-level errors
+      if (data.errors && data.errors.length > 0) {
+        const duration = Date.now() - startTime;
+        logError(
+          new Error(`API errors: ${JSON.stringify(data.errors)}`),
+          duration
+        );
+
+        throw new ApiFootballError(
+          'API returned errors',
+          response.status,
+          data.errors,
+          rateLimit
+        );
+      }
+
+      // Log successful response
       const duration = Date.now() - startTime;
-      logError(new Error('Rate limit exceeded'), duration);
+      logResponse(data, duration);
+
+      return data;
+    } catch (error) {
+      // Handle fetch errors (network issues, etc.)
+      if (error instanceof ApiFootballError) {
+        throw error;
+      }
+
+      const duration = Date.now() - startTime;
+      logError(error, duration);
 
       throw new ApiFootballError(
-        'Rate limit exceeded. Please try again later.',
-        429,
-        ['Too many requests'],
-        rateLimit
+        error instanceof Error
+          ? error.message
+          : 'An unknown error occurred while fetching data',
+        undefined,
+        undefined,
+        undefined
       );
     }
-
-    // Check for other HTTP errors
-    if (!response.ok) {
-      const duration = Date.now() - startTime;
-      const errorText = await response.text();
-
-      logError(new Error(`HTTP ${response.status}: ${errorText}`), duration);
-
-      throw new ApiFootballError(
-        `API request failed with status ${response.status}`,
-        response.status,
-        [errorText],
-        rateLimit
-      );
-    }
-
-    // Parse JSON response
-    const data: ApiFootballResponse<T> = await response.json();
-
-    // Check for API-level errors
-    if (data.errors && data.errors.length > 0) {
-      const duration = Date.now() - startTime;
-      logError(
-        new Error(`API errors: ${JSON.stringify(data.errors)}`),
-        duration
-      );
-
-      throw new ApiFootballError(
-        'API returned errors',
-        response.status,
-        data.errors,
-        rateLimit
-      );
-    }
-
-    // Log successful response
-    const duration = Date.now() - startTime;
-    logResponse(data, duration);
-
-    return data;
-  } catch (error) {
-    // Handle fetch errors (network issues, etc.)
-    if (error instanceof ApiFootballError) {
-      throw error;
-    }
-
-    const duration = Date.now() - startTime;
-    logError(error, duration);
-
-    throw new ApiFootballError(
-      error instanceof Error
-        ? error.message
-        : 'An unknown error occurred while fetching data',
-      undefined,
-      undefined,
-      undefined
-    );
-  }
+  });
 }
 
 /**
