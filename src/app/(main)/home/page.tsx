@@ -1,10 +1,16 @@
 'use client';
 
-import { useState } from 'react';
-import { DatePicker, FixtureDetail, FixtureList } from '@/components/fixtures';
+import { useMemo, useState } from 'react';
+import {
+  DatePicker,
+  FixtureDetail,
+  FixtureFilters,
+  FixtureList,
+} from '@/components/fixtures';
 import { Header, PageContainer } from '@/components/layout';
 import { useFixtures } from '@/hooks/use-fixtures';
 import { getTodayAtStartOfDay } from '@/lib/utils/date';
+import { useFiltersStore } from '@/stores/filters.store';
 import { type FixtureDisplay } from '@/types/fixtures.types';
 
 export default function HomePage() {
@@ -17,6 +23,31 @@ export default function HomePage() {
 
   // Fetch fixtures for selected date
   const { data: fixtures, isLoading, error } = useFixtures(selectedDate);
+
+  // Get filter state
+  const { hiddenLeagues, hiddenCountries } = useFiltersStore();
+
+  // Filter fixtures based on hidden leagues and countries
+  const filteredFixtures = useMemo(() => {
+    if (!fixtures) return [];
+
+    return fixtures.filter((fixture) => {
+      // Check if league is hidden
+      if (hiddenLeagues.has(fixture.league.id)) {
+        return false;
+      }
+
+      // Check if country is hidden
+      if (
+        fixture.league.country &&
+        hiddenCountries.has(fixture.league.country)
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [fixtures, hiddenLeagues, hiddenCountries]);
 
   const handleFixtureClick = (fixture: FixtureDisplay) => {
     setSelectedFixture(fixture);
@@ -31,15 +62,20 @@ export default function HomePage() {
       <Header title="Home" subtitle="Today's matches and fixtures" />
 
       <div className="space-y-6">
-        {/* Date Picker */}
-        <DatePicker
-          selectedDate={selectedDate}
-          onDateChange={setSelectedDate}
-        />
+        {/* Date Picker and Filters */}
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <DatePicker
+              selectedDate={selectedDate}
+              onDateChange={setSelectedDate}
+            />
+          </div>
+          <FixtureFilters fixtures={fixtures || []} />
+        </div>
 
         {/* Fixtures List */}
         <FixtureList
-          fixtures={fixtures || []}
+          fixtures={filteredFixtures}
           onFixtureClick={handleFixtureClick}
           isLoading={isLoading}
           error={error as Error | null}
