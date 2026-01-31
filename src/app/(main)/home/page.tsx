@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { DatePicker, FixtureList } from '@/components/fixtures';
+import { DatePicker, FixtureDetail, FixtureList } from '@/components/fixtures';
 import { Header, PageContainer } from '@/components/layout';
 import { useFixtures } from '@/hooks/use-fixtures';
 import { getTodayAtStartOfDay } from '@/lib/utils/date';
@@ -20,8 +20,10 @@ export default function HomePage() {
 
   const handleFixtureClick = (fixture: FixtureDisplay) => {
     setSelectedFixture(fixture);
-    // TODO: Open detail modal in FIX-57
-    console.log('Fixture clicked:', fixture);
+  };
+
+  const handleDetailClose = () => {
+    setSelectedFixture(null);
   };
 
   return (
@@ -43,6 +45,13 @@ export default function HomePage() {
           error={error as Error | null}
         />
       </div>
+
+      {/* Fixture Detail Modal */}
+      <FixtureDetail
+        fixture={selectedFixture}
+        open={!!selectedFixture}
+        onOpenChange={(open) => !open && handleDetailClose()}
+      />
     </PageContainer>
   );
 }
