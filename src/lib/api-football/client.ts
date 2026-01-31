@@ -184,7 +184,10 @@ export async function apiFootballGet<T>(
 
     // Log rate limit in development
     if (process.env.NODE_ENV === 'development') {
-      logRequest(endpoint, params, rateLimit);
+      console.log('📊 Rate Limit Info:', {
+        daily: `${rateLimit.requestsRemaining}/${rateLimit.requestsLimit}`,
+        perMinute: `${rateLimit.perMinuteRemaining}/${rateLimit.perMinuteLimit}`,
+      });
     }
 
     // Check for rate limit error (429)

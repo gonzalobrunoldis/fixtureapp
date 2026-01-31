@@ -22,7 +22,7 @@ describe('PageContainer', () => {
     const main = container.querySelector('main');
 
     expect(main).toHaveClass('px-4');
-    expect(main).toHaveClass('py-6');
+    expect(main).toHaveClass('pt-6');
   });
 
   it('removes padding when noPadding is true', () => {
@@ -34,7 +34,7 @@ describe('PageContainer', () => {
     const main = container.querySelector('main');
 
     expect(main).not.toHaveClass('px-4');
-    expect(main).not.toHaveClass('py-6');
+    expect(main).not.toHaveClass('pt-6');
   });
 
   it('applies bottom padding for bottom navigation', () => {

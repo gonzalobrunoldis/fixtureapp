@@ -28,7 +28,7 @@ export function PageContainer({
 }: PageContainerProps) {
   return (
     <main
-      className={cn('min-h-screen pb-20', !noPadding && 'px-4 py-6', className)}
+      className={cn('min-h-screen pb-20', !noPadding && 'px-4 pt-6', className)}
     >
       {children}
     </main>

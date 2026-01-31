@@ -1,13 +1,20 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { BottomNav } from '@/components/layout/bottom-nav';
+import { usePathname } from 'next/navigation';
 
 // Mock Next.js navigation hooks
 vi.mock('next/navigation', () => ({
-  usePathname: vi.fn(() => '/home'),
+  usePathname: vi.fn(),
 }));
 
+const mockUsePathname = vi.mocked(usePathname);
+
 describe('BottomNav', () => {
+  beforeEach(() => {
+    mockUsePathname.mockReturnValue('/home');
+  });
+
   it('renders all 5 navigation tabs', () => {
     render(<BottomNav />);
 
@@ -44,8 +51,7 @@ describe('BottomNav', () => {
   });
 
   it('highlights the active tab based on current pathname', () => {
-    const { usePathname } = require('next/navigation');
-    usePathname.mockReturnValue('/home');
+    mockUsePathname.mockReturnValue('/home');
 
     render(<BottomNav />);
 
@@ -54,8 +60,7 @@ describe('BottomNav', () => {
   });
 
   it('applies muted foreground color to inactive tabs', () => {
-    const { usePathname } = require('next/navigation');
-    usePathname.mockReturnValue('/home');
+    mockUsePathname.mockReturnValue('/home');
 
     render(<BottomNav />);
 

@@ -14,9 +14,10 @@ const nextConfig = {
       },
     ],
   },
-  experimental: {
-    typedRoutes: true,
-  },
+  // Note: typedRoutes disabled until all page routes are implemented
+  // experimental: {
+  //   typedRoutes: true,
+  // },
 };
 
 export default nextConfig;

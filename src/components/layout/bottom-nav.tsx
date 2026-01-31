@@ -62,7 +62,7 @@ export function BottomNav() {
           return (
             <Link
               key={item.href}
-              href={item.href as any}
+              href={item.href}
               className={cn(
                 'flex flex-1 flex-col items-center gap-1 py-3 transition-colors',
                 isActive
